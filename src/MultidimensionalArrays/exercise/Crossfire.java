@@ -50,7 +50,6 @@ public class Crossfire {
                 newRow++;
             }
         }
-
         return newMatrix;
     }
 
