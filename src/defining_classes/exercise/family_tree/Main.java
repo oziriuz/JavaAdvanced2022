@@ -8,85 +8,39 @@ public class Main {
 
         String end = "End";
 
-        Set<Person> people = new HashSet<>();
+        Set<Person> people = new LinkedHashSet<>();
 
         String personToFind = scanner.nextLine();
-        Person person = new Person(personToFind);
 
-        people.add(person);
         String input = scanner.nextLine();
 
-        Deque<String> parentChildQueue = new ArrayDeque<>();
-        Deque<String> personQueue = new ArrayDeque<>();
+        Deque<String> connections = new ArrayDeque<>();
 
         while (!input.equals(end)) {
             if (input.contains(" - ")) {
-                parentChildQueue.offer(input);
+                connections.offer(input);
             } else {
-                personQueue.offer(input);
+                String[] data = input.split("\\s+");
+                String name = data[0] + " " + data[1];
+                String birthday = data[2];
+
+                people.add(new Person(name, birthday));
             }
 
             input = scanner.nextLine();
         }
 
-        while (!personQueue.isEmpty()) {
-            String[] data = personQueue.poll().split("\\s+");
-            String name = data[0] + " " + data[1];
-            String birthday = data[2];
-
-            boolean isPresent = false;
-
-            for (Person p : people) {
-                if (p.getName().equals(name)) {
-                    p.setBirthday(birthday);
-                    isPresent = true;
-                } else if (p.getBirthday().equals(birthday)) {
-                    p.setName(name);
-                    isPresent = true;
-                }
-            }
-
-            if (!isPresent) {
-                people.add(new Person(name, birthday));
-            }
-        }
-
-        while (!parentChildQueue.isEmpty()) {
-            String[] data = parentChildQueue.poll().split(" - ");
+        while (!connections.isEmpty()) {
+            String[] data = connections.poll().split(" - ");
             String parentData = data[0];
             String childData = data[1];
 
-            String parentName = "";
-            String parentBirthday = "";
-            String childName = "";
-            String childBirthday = "";
+            for (Person person : people) {
+                //add child to parent
+                extracted(person, parentData, people, childData, person.getChildren());
 
-            for (Person p : people) {
-                if (p.getName().equals(parentData)) {
-                    parentName = parentData;
-                    parentBirthday = p.getBirthday();
-                } else if (p.getBirthday().equals(parentData)) {
-                    parentName = p.getName();
-                    parentBirthday = parentData;
-                }
-
-                if (p.getName().equals(childData)) {
-                    childName = childData;
-                    childBirthday = p.getBirthday();
-                } else if (p.getBirthday().equals(childData)) {
-                    childName = p.getName();
-                    childBirthday = childData;
-                }
-            }
-
-            for (Person p : people) {
-                if (p.getName().equals(parentData) || p.getBirthday().equals(parentData)) {
-                    p.addChild(childName, childBirthday);
-                }
-
-                if (p.getName().equals(childData) || p.getBirthday().equals(childData)) {
-                    p.addParent(parentName, parentBirthday);
-                }
+                //add parent to child
+                extracted(person, childData, people, parentData, person.getParents());
             }
         }
 
@@ -95,6 +49,16 @@ public class Main {
                 System.out.println(p.getForPrint());
             } else if (p.getBirthday().equals(personToFind)) {
                 System.out.println(p.getForPrint());
+            }
+        }
+    }
+
+    private static void extracted(Person p, String dataToSearchIn, Set<Person> people, String dataForAdding, Set<Person> SetForAdding) {
+        if (p.getName().equals(dataToSearchIn) || p.getBirthday().equals(dataToSearchIn)) {
+            for (Person person : people) {
+                if (person.getName().equals(dataForAdding) || person.getBirthday().equals(dataForAdding)) {
+                    SetForAdding.add(person);
+                }
             }
         }
     }

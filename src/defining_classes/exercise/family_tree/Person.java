@@ -1,64 +1,27 @@
 package defining_classes.exercise.family_tree;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Person {
-    private String name = "";
-    private String birthday = "";
+    private final String name;
+    private final String birthday;
 
-    private final Set<Person> parents = new HashSet<>();
-    private final Set<Person> children = new HashSet<>();
+    private final Set<Person> parents = new LinkedHashSet<>();
 
-    public Person(String personToFind) {
-        if (personToFind.contains("/")) {
-            this.birthday = personToFind;
-        } else {
-            this.name = personToFind;
-        }
+    private final Set<Person> children = new LinkedHashSet<>();
+
+    public Set<Person> getParents() {
+        return parents;
+    }
+
+    public Set<Person> getChildren() {
+        return children;
     }
 
     public Person(String name, String birthday) {
-        setName(name);
-        setBirthday(birthday);
-    }
-
-    public void addChild(String childName, String childBirthday) {
-        boolean isPresent = false;
-        for (Person child : children) {
-            if (child.getName().equals(childName)) {
-                child.setBirthday(childBirthday);
-                isPresent = true;
-            }
-
-            if (child.getBirthday().equals(childBirthday)) {
-                child.setName(childName);
-                isPresent = true;
-            }
-        }
-
-        if (!isPresent) {
-            children.add(new Person(childName, childBirthday));
-        }
-    }
-
-    public void addParent(String parentName, String parentBirthday) {
-        boolean isPresent = false;
-        for (Person parent : parents) {
-            if (parent.getName().equals(parentName)) {
-                parent.setBirthday(parentBirthday);
-                isPresent = true;
-            }
-
-            if (parent.getBirthday().equals(parentBirthday)) {
-                parent.setName(parentName);
-                isPresent = true;
-            }
-        }
-
-        if (!isPresent) {
-            parents.add(new Person(parentName, parentBirthday));
-        }
+        this.name = name;
+        this.birthday = birthday;
     }
 
     public String getName() {
@@ -68,15 +31,6 @@ public class Person {
     public String getBirthday() {
         return birthday;
     }
-
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
 
     public String getForPrint() {
         return String.format("%s %s%n" +
