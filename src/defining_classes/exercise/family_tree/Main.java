@@ -37,10 +37,10 @@ public class Main {
 
             for (Person person : people) {
                 //add child to parent
-                extracted(person, parentData, people, childData, person.getChildren());
+                addConnection(person, people, parentData, person.getChildren(), childData);
 
                 //add parent to child
-                extracted(person, childData, people, parentData, person.getParents());
+                addConnection(person, people, childData, person.getParents(), parentData);
             }
         }
 
@@ -53,13 +53,20 @@ public class Main {
         }
     }
 
-    private static void extracted(Person p, String dataToSearchIn, Set<Person> people, String dataForAdding, Set<Person> SetForAdding) {
-        if (p.getName().equals(dataToSearchIn) || p.getBirthday().equals(dataToSearchIn)) {
-            for (Person person : people) {
-                if (person.getName().equals(dataForAdding) || person.getBirthday().equals(dataForAdding)) {
-                    SetForAdding.add(person);
-                }
+    private static void addConnection(Person p, Set<Person> people, String personData,
+                                      Set<Person> collectionToAddTo, String personDataForAdding) {
+        if (p.getName().equals(personData) || p.getBirthday().equals(personData)) {
+            collectionToAddTo.add(findPersonByData(people, personDataForAdding));
+        }
+    }
+
+    public static Person findPersonByData(Set<Person> people, String data) {
+        for (Person person : people) {
+            if (person.getName().equals(data) || person.getBirthday().equals(data)) {
+                return person;
             }
         }
+
+        return null;
     }
 }
