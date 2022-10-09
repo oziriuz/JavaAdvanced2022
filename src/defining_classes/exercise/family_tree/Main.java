@@ -7,14 +7,11 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         String end = "End";
-
         Set<Person> people = new LinkedHashSet<>();
+        Deque<String> connections = new ArrayDeque<>();
 
         String personToFind = scanner.nextLine();
-
         String input = scanner.nextLine();
-
-        Deque<String> connections = new ArrayDeque<>();
 
         while (!input.equals(end)) {
             if (input.contains(" - ")) {
