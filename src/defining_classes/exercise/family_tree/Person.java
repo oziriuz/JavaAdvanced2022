@@ -33,12 +33,12 @@ public class Person {
     }
 
     public String getForPrint() {
-        return String.format("%s %s%n" +
+        return String.format("%s %n" +
                         "Parents:%n" +
                         "%s" +
                         "Children:%n" +
                         "%s",
-                this.name, this.birthday,
+                this,
                 getCollectionToString(parents),
                 getCollectionToString(children));
     }
