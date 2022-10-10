@@ -33,14 +33,7 @@ public class Person {
     }
 
     public String getForPrint() {
-        return String.format("%s %n" +
-                        "Parents:%n" +
-                        "%s" +
-                        "Children:%n" +
-                        "%s",
-                this,
-                getCollectionToString(parents),
-                getCollectionToString(children));
+        return String.format("%s %nParents:%n%sChildren:%n%s", this, getCollectionToString(parents), getCollectionToString(children));
     }
 
     @Override
