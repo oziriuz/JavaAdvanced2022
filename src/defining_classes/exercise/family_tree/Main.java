@@ -32,12 +32,17 @@ public class Main {
             String parentData = data[0];
             String childData = data[1];
 
-            for (Person person : people) {
-                //add child to parent
-                addConnection(person, people, parentData, person.getChildren(), childData);
-
-                //add parent to child
-                addConnection(person, people, childData, person.getParents(), parentData);
+            for (Person parent : people) {
+                if (parent.getName().equals(parentData) || parent.getBirthday().equals(parentData)) {
+                    for (Person child : people) {
+                        if (child.getName().equals(childData) || child.getBirthday().equals(childData)) {
+                            //add child to parent
+                            parent.getChildren().add(child);
+                            //add parent to child
+                            child.getParents().add(parent);
+                        }
+                    }
+                }
             }
         }
 
@@ -48,22 +53,5 @@ public class Main {
                 System.out.println(p.getForPrint());
             }
         }
-    }
-
-    private static void addConnection(Person p, Set<Person> people, String personData,
-                                      Set<Person> collectionToAddTo, String personDataForAdding) {
-        if (p.getName().equals(personData) || p.getBirthday().equals(personData)) {
-            collectionToAddTo.add(findPersonByData(people, personDataForAdding));
-        }
-    }
-
-    public static Person findPersonByData(Set<Person> people, String data) {
-        for (Person person : people) {
-            if (person.getName().equals(data) || person.getBirthday().equals(data)) {
-                return person;
-            }
-        }
-
-        return null;
     }
 }
