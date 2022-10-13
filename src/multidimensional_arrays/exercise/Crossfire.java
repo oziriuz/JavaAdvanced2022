@@ -23,47 +23,42 @@ public class Crossfire {
             int rowStartDestruction = Integer.parseInt(command[0]);
             int columnStartDestruction = Integer.parseInt(command[1]);
             int radiusOfDestruction = Integer.parseInt(command[2]);
-            matrixDestruction(matrix, rowStartDestruction, columnStartDestruction, radiusOfDestruction);
-            matrix = clearDestructedCells(matrix);
+            bombTheMatrix(matrix, rowStartDestruction, columnStartDestruction, radiusOfDestruction);
+            matrix = getMatrixClean(matrix);
             input = scanner.nextLine();
         }
 
         printMatrixWithoutZeros(matrix);
     }
 
-    private static int[][] clearDestructedCells(int[][] oldMatrix) {
-        int rows = oldMatrix.length;
-        int columns = oldMatrix[rows - 1].length;
+    private static int[][] getMatrixClean(int[][] oldMatrix) {
 
-        int[][] newMatrix = new int[rows][columns];
+        int[][] newMatrix = new int[oldMatrix.length][oldMatrix[0].length];
         int newRow = 0;
         for (int[] row : oldMatrix) {
             int newCol = 0;
-            for (int c = 0; c < columns; c++) {
+            for (int c = 0; c < oldMatrix[0].length; c++) {
                 if (row[c] != 0) {
                     newMatrix[newRow][newCol++] = row[c];
                 }
             }
 
-            //move to next row only if at least one cell is filled in this one
             if (newCol > 0) {
+                //move to next row only if at least one cell is filled in this one
                 newRow++;
             }
         }
         return newMatrix;
     }
 
-    private static void matrixDestruction(int[][] matrix, int row, int col, int radius) {
-        //bomb up and down
-        for (int bombR = row - radius; bombR <= row + radius; bombR++) {
-            if (isValidCoordinate(bombR, col, matrix)) {
-                matrix[bombR][col] = 0;
+    private static void bombTheMatrix(int[][] matrix, int row, int col, int radius) {
+        for (int i = -radius; i <= radius; i++) {
+            if (isValidCoordinate(row + i, col, matrix)) {
+                matrix[row + i][col] = 0;
             }
-        }
-        //bomb left and right
-        for (int bombC = col - radius; bombC <= col + radius; bombC++) {
-            if (isValidCoordinate(row, bombC, matrix)) {
-                matrix[row][bombC] = 0;
+
+            if (isValidCoordinate(row, col + i, matrix)) {
+                matrix[row][col + i] = 0;
             }
         }
     }
