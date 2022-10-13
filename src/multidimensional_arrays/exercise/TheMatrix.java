@@ -10,46 +10,29 @@ public class TheMatrix {
         int[] dimensions = getIntArrFromConsole(scanner);
         int r = dimensions[0];
         int c = dimensions[1];
-
         char[][] matrix = getCharMatrixFromConsole(scanner, r, c);
-
         char fillSymbol = scanner.nextLine().charAt(0);
         int[] startPosition = getIntArrFromConsole(scanner);
         int startR = startPosition[0];
         int startC = startPosition[1];
+        char initialSymbol = matrix[startR][startC];
 
-        if (isValidCoordinate(startR, startC, matrix)) {
-            char initialSymbol = matrix[startR][startC];
-            FillMatrix(fillSymbol, initialSymbol, startR, startC, matrix);
-        }
-
+        FillMatrix(fillSymbol, initialSymbol, startR, startC, matrix);
         printMatrix(matrix);
     }
 
     private static void FillMatrix(char fillSymbol, char initialSymbol, int startR, int startC, char[][] matrix) {
-        matrix[startR][startC] = fillSymbol;
-        if (!isValidCoordinate(startR, startC + 1, matrix) || matrix[startR][startC + 1] != initialSymbol) {
-            if (!isValidCoordinate(startR + 1, startC, matrix) || matrix[startR + 1][startC] != initialSymbol) {
-                if (!isValidCoordinate(startR, startC - 1, matrix) || matrix[startR][startC - 1] != initialSymbol) {
-                    if (!isValidCoordinate(startR - 1, startC, matrix) || matrix[startR - 1][startC] != initialSymbol) {
-                        return;
-                    }
-                }
-            }
+        if (!isValidCoordinate(startR, startC, matrix) || matrix[startR][startC] != initialSymbol) {
+            return;
         }
 
-        if (isValidCoordinate(startR, startC + 1, matrix) && matrix[startR][startC + 1] == initialSymbol) {
-            FillMatrix(fillSymbol, initialSymbol, startR, startC + 1, matrix);
-        }
-        if (isValidCoordinate(startR + 1, startC, matrix) && matrix[startR + 1][startC] == initialSymbol) {
-            FillMatrix(fillSymbol, initialSymbol, startR + 1, startC, matrix);
-        }
-        if (isValidCoordinate(startR, startC - 1, matrix) && matrix[startR][startC - 1] == initialSymbol) {
-            FillMatrix(fillSymbol, initialSymbol, startR, startC - 1, matrix);
-        }
-        if (isValidCoordinate(startR - 1, startC, matrix) && matrix[startR - 1][startC] == initialSymbol) {
-            FillMatrix(fillSymbol, initialSymbol, startR - 1, startC, matrix);
-        }
+        matrix[startR][startC] = fillSymbol;
+
+        FillMatrix(fillSymbol, initialSymbol, startR, startC + 1, matrix);
+        FillMatrix(fillSymbol, initialSymbol, startR + 1, startC, matrix);
+        FillMatrix(fillSymbol, initialSymbol, startR, startC - 1, matrix);
+        FillMatrix(fillSymbol, initialSymbol, startR - 1, startC, matrix);
+
     }
 
     private static void printMatrix(char[][] matrix) {
