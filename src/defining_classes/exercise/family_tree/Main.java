@@ -47,9 +47,7 @@ public class Main {
         }
 
         for (Person p : people) {
-            if (p.getName().equals(personToFind)) {
-                System.out.println(p.getForPrint());
-            } else if (p.getBirthday().equals(personToFind)) {
+            if (p.getName().equals(personToFind) || p.getBirthday().equals(personToFind)) {
                 System.out.println(p.getForPrint());
             }
         }
