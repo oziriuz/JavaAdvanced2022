@@ -32,7 +32,6 @@ public class TheMatrix {
         FillMatrix(fillSymbol, initialSymbol, startR + 1, startC, matrix);
         FillMatrix(fillSymbol, initialSymbol, startR, startC - 1, matrix);
         FillMatrix(fillSymbol, initialSymbol, startR - 1, startC, matrix);
-
     }
 
     private static void printMatrix(char[][] matrix) {
