@@ -27,3 +27,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/src/streams_and_files/lab/resources/
+/src/streams_and_files/lab/resources/
+/src/streams_and_files/exercise/resources/
