@@ -10,11 +10,11 @@ public class Armory {
 
         int n = Integer.parseInt(scanner.nextLine());
         char[][] armory = getCharMatrixFromConsole(scanner, n, n);
-
         int[] playerPosition = getSymbolCoordinates(armory, 'A');
 
         while (goldCoin > 0) {
             if (playerPosition == null) {
+                //player left the armory
                 break;
             }
             String command = scanner.nextLine();
@@ -22,20 +22,16 @@ public class Armory {
             int playerC = playerPosition[1];
             switch (command) {
                 case "up":
-                    int up = playerR - 1;
-                    playerPosition = movePlayer(armory, playerR, playerC, up, playerC);
+                    playerPosition = movePlayer(armory, playerR, playerC, playerR - 1, playerC);
                     break;
                 case "down":
-                    int down = playerR + 1;
-                    playerPosition = movePlayer(armory, playerR, playerC, down, playerC);
+                    playerPosition = movePlayer(armory, playerR, playerC, playerR + 1, playerC);
                     break;
                 case "right":
-                    int right = playerC + 1;
-                    playerPosition = movePlayer(armory, playerR, playerC, playerR, right);
+                    playerPosition = movePlayer(armory, playerR, playerC, playerR, playerC + 1);
                     break;
                 case "left":
-                    int left = playerC - 1;
-                    playerPosition = movePlayer(armory, playerR, playerC, playerR, left);
+                    playerPosition = movePlayer(armory, playerR, playerC, playerR, playerC - 1);
                     break;
                 default:
                     break;
@@ -45,8 +41,8 @@ public class Armory {
         if (goldCoin <= 0) {
             System.out.println("Very nice swords, I will come back for more!");
         }
-        System.out.printf("The king paid %d gold coins.%n", 65 - goldCoin);
 
+        System.out.printf("The king paid %d gold coins.%n", 65 - goldCoin);
         printMatrix(armory);
     }
 
@@ -75,8 +71,8 @@ public class Armory {
         return r >= 0 && r < matrix.length && c >= 0 && c < matrix[matrix.length - 1].length;
     }
 
-    private static boolean hasMirror(int r, int c, char[][] matrix) {
-        return matrix[r][c] == 'M';
+    private static boolean hasSymbol(int r, int c, char[][] matrix, char symbol) {
+        return matrix[r][c] == symbol;
     }
 
     private static boolean hasSword(int r, int c, char[][] matrix) {
@@ -84,25 +80,29 @@ public class Armory {
     }
 
     private static int[] movePlayer(char[][] armory, int playerR, int playerC, int moveToR, int moveToC) {
-        if (!isValidCoordinate(moveToR, moveToC, armory)) {
-            armory[playerR][playerC] = '-';
+        armory[playerR][playerC] = '-';
+        playerR = moveToR;
+        playerC = moveToC;
+
+        if (!isValidCoordinate(playerR, playerC, armory)) {
             System.out.println("I do not need more swords!");
+            //leave town
             return null;
-        } else if (hasMirror(moveToR, moveToC, armory)) {
-            armory[playerR][playerC] = '-';
-            armory[moveToR][moveToC] = '-';
-            int[] mirrorPosition = getSymbolCoordinates(armory, 'M');
-            armory[mirrorPosition[0]][mirrorPosition[1]] = 'A';
-            return mirrorPosition;
-        } else if (hasSword(moveToR, moveToC, armory)) {
-            armory[playerR][playerC] = '-';
-            goldCoin -= Integer.parseInt(String.valueOf(armory[moveToR][moveToC]));
-            armory[moveToR][moveToC] = 'A';
         } else {
-            armory[playerR][playerC] = '-';
-            armory[moveToR][moveToC] = 'A';
+            if (hasSword(playerR, playerC, armory)) {
+                goldCoin -= Integer.parseInt(String.valueOf(armory[playerR][playerC]));
+            } else if (hasSymbol(playerR, playerC, armory, 'M')) {
+                //disappear from this mirror
+                armory[playerR][playerC] = '-';
+                //find the other mirror
+                int[] mirrorPosition = getSymbolCoordinates(armory, 'M');
+                assert mirrorPosition != null;
+                playerR = mirrorPosition[0];
+                playerC = mirrorPosition[1];
+            }
         }
-        return new int[]{moveToR, moveToC};
+        armory[playerR][playerC] = 'A';
+        return new int[]{playerR, playerC};
     }
 
     private static void printMatrix(char[][] matrix) {

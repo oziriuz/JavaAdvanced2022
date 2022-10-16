@@ -17,63 +17,47 @@ public class TreasureHunt {
 
         List<String> path = new ArrayList<>();
 
-        int playerR = 0;
-        int playerC = 0;
-        for (int i = 0; i < r; i++) {
-            for (int j = 0; j < c; j++) {
-                if (treasureMap[i][j] == 'Y') {
-                    playerR = i;
-                    playerC = j;
-                    break;
-                }
-            }
-        }
+        int[] player = getSymbolCoordinates(treasureMap, 'Y');
+        int playerR = player[0];
+        int playerC = player[1];
 
-        int treasureR = 0;
-        int treasureC = 0;
-        for (int i = 0; i < r; i++) {
-            for (int j = 0; j < c; j++) {
-                if (treasureMap[i][j] == 'X') {
-                    treasureR = i;
-                    treasureC = j;
-                    break;
-                }
-            }
-        }
+        int[] treasure = getSymbolCoordinates(treasureMap, 'X');
+        int treasureR = treasure[0];
+        int treasureC = treasure[1];
 
         String command = scanner.nextLine();
         while (!command.equals(end)) {
             switch (command) {
                 case "up":
-                    int up = playerR - 1;
-                    if (isValidCoordinate(up, playerC, treasureMap) && !hasTree(up, playerC, treasureMap)) {
-                        playerR = up;
+                    if (isValidCoordinate(playerR - 1, playerC, treasureMap)
+                            && !hasSymbol(playerR - 1, playerC, treasureMap, 'T')) {
+                        playerR--;
                         path.add("up");
                     }
                     break;
                 case "down":
-                    int down = playerR + 1;
-                    if (isValidCoordinate(down, playerC, treasureMap) && !hasTree(down, playerC, treasureMap)) {
-                        playerR = down;
+                    if (isValidCoordinate(playerR + 1, playerC, treasureMap)
+                            && !hasSymbol(playerR + 1, playerC, treasureMap, 'T')) {
+                        playerR++;
                         path.add("down");
                     }
                     break;
                 case "right":
-                    int right = playerC + 1;
-                    if (isValidCoordinate(playerR, right, treasureMap) && !hasTree(playerR, right, treasureMap)) {
-                        playerC = right;
+                    if (isValidCoordinate(playerR, playerC + 1, treasureMap)
+                            && !hasSymbol(playerR, playerC + 1, treasureMap, 'T')) {
+                        playerC++;
                         path.add("right");
                     }
                     break;
                 case "left":
-                    int left = playerC - 1;
-                    if (isValidCoordinate(playerR, left, treasureMap) && !hasTree(playerR, left, treasureMap)) {
-                        playerC = left;
+                    if (isValidCoordinate(playerR, playerC - 1, treasureMap) && !hasSymbol(playerR, playerC - 1, treasureMap, 'T')) {
+                        playerC--;
                         path.add("left");
                     }
                 default:
                     break;
             }
+
             command = scanner.nextLine();
         }
 
@@ -106,7 +90,18 @@ public class TreasureHunt {
         return r >= 0 && r < matrix.length && c >= 0 && c < matrix[matrix.length - 1].length;
     }
 
-    private static boolean hasTree(int r, int c, char[][] matrix) {
-        return matrix[r][c] == 'T';
+    private static boolean hasSymbol(int r, int c, char[][] matrix, char symbol) {
+        return matrix[r][c] == symbol;
+    }
+
+    private static int[] getSymbolCoordinates(char[][] matrix, char symbol) {
+        for (int r = 0; r < matrix.length; r++) {
+            for (int c = 0; c < matrix[0].length; c++) {
+                if (matrix[r][c] == symbol) {
+                    return new int[]{r, c};
+                }
+            }
+        }
+        return new int[2];
     }
 }

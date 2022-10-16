@@ -11,73 +11,72 @@ public class StickyFingers {
         int n = Integer.parseInt(scanner.nextLine());
         String[] commands = scanner.nextLine().split(",");
         char[][] town = getCharMatrixFromConsole(scanner, n, n);
-        int[] playerPosition = getPlayerCoordinates(town);
+        int[] playerPosition = getSymbolCoordinates(town, 'D');
 
+        boolean isCaught = false;
         for (String command : commands) {
-            assert playerPosition != null;
             int playerR = playerPosition[0];
             int playerC = playerPosition[1];
             switch (command) {
                 case "up":
-                    int up = playerR - 1;
-                    playerPosition = movePlayer(town, playerR, playerC, up, playerC);
+                    playerPosition = movePlayer(town, playerR, playerC, playerR - 1, playerC);
                     break;
                 case "down":
-                    int down = playerR + 1;
-                    playerPosition = movePlayer(town, playerR, playerC, down, playerC);
+                    playerPosition = movePlayer(town, playerR, playerC, playerR + 1, playerC);
                     break;
                 case "right":
-                    int right = playerC + 1;
-                    playerPosition = movePlayer(town, playerR, playerC, playerR, right);
+                    playerPosition = movePlayer(town, playerR, playerC, playerR, playerC + 1);
                     break;
                 case "left":
-                    int left = playerC - 1;
-                    playerPosition = movePlayer(town, playerR, playerC, playerR, left);
+                    playerPosition = movePlayer(town, playerR, playerC, playerR, playerC - 1);
                     break;
                 default:
                     break;
             }
 
             if (playerPosition == null) {
-                printMatrix(town);
-                return;
+                isCaught = true;
+                System.out.printf("You got caught with %d$, and you are going to jail.%n", stolenMoney);
+                break;
             }
         }
 
-        System.out.printf("Your last theft has finished successfully with %d$ in your pocket.%n", stolenMoney);
+        if (!isCaught) {
+            System.out.printf("Your last theft has finished successfully with %d$ in your pocket.%n", stolenMoney);
+        }
         printMatrix(town);
     }
 
-    private static int[] getPlayerCoordinates(char[][] town) {
+    private static int[] getSymbolCoordinates(char[][] town, char symbol) {
         for (int r = 0; r < town.length; r++) {
             for (int c = 0; c < town[0].length; c++) {
-                if (town[r][c] == 'D') {
+                if (town[r][c] == symbol) {
                     return new int[]{r, c};
                 }
             }
         }
-        return null;
+        return new int[2];
     }
 
     private static int[] movePlayer(char[][] town, int playerR, int playerC, int moveToR, int moveToC) {
         if (!isValidCoordinate(moveToR, moveToC, town)) {
             System.out.println("You cannot leave the town, there is police outside!");
-            return new int[]{playerR, playerC};
-        } else if (hasPolice(moveToR, moveToC, town)) {
-            System.out.printf("You got caught with %d$, and you are going to jail.%n", stolenMoney);
-            town[playerR][playerC] = '+';
-            town[moveToR][moveToC] = '#';
-            return null;
-        } else if (hasHouse(moveToR, moveToC, town)) {
-            town[playerR][playerC] = '+';
-            town[moveToR][moveToC] = 'D';
-            System.out.printf("You successfully stole %d$.%n", moveToR * moveToC);
-            stolenMoney += moveToR * moveToC;
         } else {
             town[playerR][playerC] = '+';
-            town[moveToR][moveToC] = 'D';
+            playerR = moveToR;
+            playerC = moveToC;
+            if (hasSymbol(playerR, playerC, town, '$')) {
+                //hasHouse
+                stolenMoney += playerR * moveToC;
+                System.out.printf("You successfully stole %d$.%n", moveToR * moveToC);
+            } else if (hasSymbol(playerR, playerC, town, 'P')) {
+                //hasPolice
+                town[playerR][playerC] = '#';
+                return null;
+            }
+            town[playerR][playerC] = 'D';
         }
-        return new int[]{moveToR, moveToC};
+        return new int[]{playerR, playerC};
     }
 
     private static char[][] getCharMatrixFromConsole(Scanner scanner, int r, int c) {
@@ -94,12 +93,8 @@ public class StickyFingers {
         return r >= 0 && r < matrix.length && c >= 0 && c < matrix[matrix.length - 1].length;
     }
 
-    private static boolean hasPolice(int r, int c, char[][] matrix) {
-        return matrix[r][c] == 'P';
-    }
-
-    private static boolean hasHouse(int r, int c, char[][] matrix) {
-        return matrix[r][c] == '$';
+    private static boolean hasSymbol(int r, int c, char[][] matrix, char symbol) {
+        return matrix[r][c] == symbol;
     }
 
     private static void printMatrix(char[][] matrix) {
